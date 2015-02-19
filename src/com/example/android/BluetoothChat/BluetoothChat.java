@@ -49,11 +49,11 @@ public class BluetoothChat extends Activity {
     private static final boolean D = true;
 
     // Message types sent from the BluetoothChatService Handler
-    public static final int MESSAGE_STATE_CHANGE = 1;
-    public static final int MESSAGE_READ = 2;
-    public static final int MESSAGE_WRITE = 3;
-    public static final int MESSAGE_DEVICE_NAME = 4;
-    public static final int MESSAGE_TOAST = 5;
+    public static final int MESSAGE_STATE_CHANGE 	= 1;
+    public static final int MESSAGE_READ 			= 2;
+    public static final int MESSAGE_WRITE 			= 3;
+    public static final int MESSAGE_DEVICE_NAME 	= 4;
+    public static final int MESSAGE_TOAST 			= 5;
 
     // Key names received from the BluetoothChatService Handler
     public static final String DEVICE_NAME = "device_name";
@@ -110,7 +110,7 @@ public class BluetoothChat extends Activity {
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-        // Otherwise, setup the chat session
+            // Otherwise, setup the chat session
         } else {
             if (mChatService == null) setupChat();
         }
@@ -127,8 +127,8 @@ public class BluetoothChat extends Activity {
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
             if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
-              // Start the Bluetooth chat services
-              mChatService.start();
+            	// Start the Bluetooth chat services
+            	mChatService.start();
             }
         }
     }
@@ -150,7 +150,7 @@ public class BluetoothChat extends Activity {
         mSendButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 // Send a message using content of the edit text widget
-                TextView view = (TextView) findViewById(R.id.edit_text_out);
+                TextView view  = (TextView) findViewById(R.id.edit_text_out);
                 String message = view.getText().toString();
                 sendMessage(message);
             }
@@ -289,36 +289,37 @@ public class BluetoothChat extends Activity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(D) Log.d(TAG, "onActivityResult " + resultCode);
         switch (requestCode) {
-        case REQUEST_CONNECT_DEVICE_SECURE:
-            // When DeviceListActivity returns with a device to connect
-            if (resultCode == Activity.RESULT_OK) {
-                connectDevice(data, true);
-            }
-            break;
-        case REQUEST_CONNECT_DEVICE_INSECURE:
-            // When DeviceListActivity returns with a device to connect
-            if (resultCode == Activity.RESULT_OK) {
-                connectDevice(data, false);
-            }
-            break;
-        case REQUEST_ENABLE_BT:
-            // When the request to enable Bluetooth returns
-            if (resultCode == Activity.RESULT_OK) {
-                // Bluetooth is now enabled, so set up a chat session
-                setupChat();
-            } else {
-                // User did not enable Bluetooth or an error occurred
-                Log.d(TAG, "BT not enabled");
-                Toast.makeText(this, R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }
-    }
+        	case REQUEST_CONNECT_DEVICE_SECURE:
+        		// When DeviceListActivity returns with a device to connect
+        		if (resultCode == Activity.RESULT_OK) {
+        			connectDevice(data, true);
+        		}
+        		break;
+        	
+        	case REQUEST_CONNECT_DEVICE_INSECURE:
+        		// When DeviceListActivity returns with a device to connect
+        		if (resultCode == Activity.RESULT_OK) {
+        			connectDevice(data, false);
+        		}
+        		break;
+        		
+        	case REQUEST_ENABLE_BT:
+        		// When the request to enable Bluetooth returns
+        		if (resultCode == Activity.RESULT_OK) {
+        			// Bluetooth is now enabled, so set up a chat session
+        			setupChat();
+        		} else {
+        			// User did not enable Bluetooth or an error occurred
+        			Log.d(TAG, "BT not enabled");
+        			Toast.makeText(this, R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
+        			finish();
+        		}
+        	}
+    	}
 
     private void connectDevice(Intent data, boolean secure) {
         // Get the device MAC address
-        String address = data.getExtras()
-            .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+        String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
         // Get the BluetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
@@ -335,23 +336,23 @@ public class BluetoothChat extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent serverIntent = null;
+        
         switch (item.getItemId()) {
-        case R.id.secure_connect_scan:
-            // Launch the DeviceListActivity to see devices and do scan
-            serverIntent = new Intent(this, DeviceListActivity.class);
-            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-            return true;
-        case R.id.insecure_connect_scan:
-            // Launch the DeviceListActivity to see devices and do scan
-            serverIntent = new Intent(this, DeviceListActivity.class);
-            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
-            return true;
-        case R.id.discoverable:
-            // Ensure this device is discoverable by others
-            ensureDiscoverable();
-            return true;
-        }
-        return false;
-    }
-
-}
+        	case R.id.secure_connect_scan:
+        		// Launch the DeviceListActivity to see devices and do scan
+        		serverIntent = new Intent(this, DeviceListActivity.class);
+        		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+        		return true;
+        	case R.id.insecure_connect_scan:
+        		// Launch the DeviceListActivity to see devices and do scan
+        		serverIntent = new Intent(this, DeviceListActivity.class);
+        		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+        		return true;
+        	case R.id.discoverable:
+        		// Ensure this device is discoverable by others
+        		ensureDiscoverable();
+        		return true;
+        	}
+        	return false;
+    	}
+	}
