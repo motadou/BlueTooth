@@ -10,6 +10,8 @@ import android.util.Log;
 
 
 public class SPPUtils {
+	/*
+}
 	static public boolean createBond(Class<?> btClass, BluetoothDevice btDevice) throws Exception
 	{
 		Method createBondMethod = btClass.getMethod("createBond");
@@ -190,4 +192,5 @@ public class SPPUtils {
 	e.printStackTrace();
 	}
 	}
+	*/
 }

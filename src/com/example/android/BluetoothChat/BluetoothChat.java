@@ -30,7 +30,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
@@ -216,14 +215,14 @@ public class BluetoothChat extends Activity {
     }
 
     // The action listener for the EditText widget, to listen for the return key
-    private TextView.OnEditorActionListener mWriteListener =
-        new TextView.OnEditorActionListener() {
+    private TextView.OnEditorActionListener mWriteListener = new TextView.OnEditorActionListener() {
         public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
             // If the action is a key-up event on the return key, send the message
             if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
                 String message = view.getText().toString();
                 sendMessage(message);
             }
+            
             if(D) Log.i(TAG, "END onEditorAction");
             return true;
         }
@@ -244,50 +243,53 @@ public class BluetoothChat extends Activity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-            case MESSAGE_STATE_CHANGE:
-                if(D) Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
-                switch (msg.arg1) {
-                case BluetoothChatService.STATE_CONNECTED:
-                    setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-                    mConversationArrayAdapter.clear();
-                    break;
-                case BluetoothChatService.STATE_CONNECTING:
-                    setStatus(R.string.title_connecting);
-                    break;
-                case BluetoothChatService.STATE_LISTEN:
-                case BluetoothChatService.STATE_NONE:
-                    setStatus(R.string.title_not_connected);
-                    break;
-                }
-                break;
-            case MESSAGE_WRITE:
-                byte[] writeBuf = (byte[]) msg.obj;
-                // construct a string from the buffer
-                String writeMessage = new String(writeBuf);
-                mConversationArrayAdapter.add("Me:  " + writeMessage);
-                break;
-            case MESSAGE_READ:
-                byte[] readBuf = (byte[]) msg.obj;
-                // construct a string from the valid bytes in the buffer
-                String readMessage = new String(readBuf, 0, msg.arg1);
-                mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
-                break;
-            case MESSAGE_DEVICE_NAME:
-                // save the connected device's name
-                mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
-                Toast.makeText(getApplicationContext(), "Connected to "
-                               + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                break;
-            case MESSAGE_TOAST:
-                Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST),
-                               Toast.LENGTH_SHORT).show();
-                break;
+            	case MESSAGE_STATE_CHANGE:
+            		if(D) Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
+            		switch (msg.arg1) {
+            			case BluetoothChatService.STATE_CONNECTED:
+            				setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+            				mConversationArrayAdapter.clear();
+            				break;
+            			case BluetoothChatService.STATE_CONNECTING:
+            				setStatus(R.string.title_connecting);
+            				break;
+            			case BluetoothChatService.STATE_LISTEN:
+            			case BluetoothChatService.STATE_NONE:
+            				setStatus(R.string.title_not_connected);
+            				break;
+            		}
+            		break;
+            	
+            	case MESSAGE_WRITE:
+            		byte[] writeBuf = (byte[]) msg.obj;
+            		// construct a string from the buffer
+            		String writeMessage = new String(writeBuf);
+            		mConversationArrayAdapter.add("Me:  " + writeMessage);
+            		break;
+            	
+            	case MESSAGE_READ:
+            		byte[] readBuf = (byte[]) msg.obj;
+            		// 	construct a string from the valid bytes in the buffer
+            		String readMessage = new String(readBuf, 0, msg.arg1);
+            		mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
+            		break;
+            	
+            	case MESSAGE_DEVICE_NAME:
+            		// save the connected device's name
+            		mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
+            		Toast.makeText(getApplicationContext(), "Connected to " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+            		break;
+            	
+            	case MESSAGE_TOAST:
+            		Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST), Toast.LENGTH_SHORT).show();
+            		break;
             }
         }
     };
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(D) Log.d(TAG, "onActivityResult " + resultCode);
+
         switch (requestCode) {
         	case REQUEST_CONNECT_DEVICE_SECURE:
         		// When DeviceListActivity returns with a device to connect
@@ -314,8 +316,8 @@ public class BluetoothChat extends Activity {
         			Toast.makeText(this, R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
         			finish();
         		}
-        	}
-    	}
+        }
+    }
 
     private void connectDevice(Intent data, boolean secure) {
         // Get the device MAC address
