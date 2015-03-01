@@ -53,10 +53,7 @@ public class BluetoothChatService {
 
     private static final UUID MY_UUID_SECURE   = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static final UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    
-    
-    
-    
+   
     // Member fields
     private final BluetoothAdapter mAdapter;
     private final Handler mHandler;
@@ -79,7 +76,7 @@ public class BluetoothChatService {
      */
     public BluetoothChatService(Context context, Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
-        mState = STATE_NONE;
+        mState   = STATE_NONE;
         mHandler = handler;
     }
 
@@ -129,7 +126,7 @@ public class BluetoothChatService {
 
     /**
      * Start the ConnectThread to initiate a connection to a remote device.
-     * @param device  The BluetoothDevice to connect
+     * @param device The BluetoothDevice to connect
      * @param secure Socket Security type - Secure (true) , Insecure (false)
      */
     public synchronized void connect(BluetoothDevice device, boolean secure) {
@@ -302,6 +299,7 @@ public class BluetoothChatService {
                     // This is a blocking call and will only return on a
                     // successful connection or an exception
                     socket = mmServerSocket.accept();
+                    Log.e("MOTADOU", "acceept");
                 } catch (IOException e) {
                     Log.e(TAG, "Socket Type: " + mSocketType + "accept() failed", e);
                     break;
@@ -311,27 +309,25 @@ public class BluetoothChatService {
                 if (socket != null) {
                     synchronized (BluetoothChatService.this) {
                         switch (mState) {
-                        case STATE_LISTEN:
-                        case STATE_CONNECTING:
-                            // Situation normal. Start the connected thread.
-                            connected(socket, socket.getRemoteDevice(),
-                                    mSocketType);
-                            break;
-                        case STATE_NONE:
-                        case STATE_CONNECTED:
-                            // Either not ready or already connected. Terminate new socket.
-                            try {
-                                socket.close();
-                            } catch (IOException e) {
-                                Log.e(TAG, "Could not close unwanted socket", e);
-                            }
-                            break;
+                        	case STATE_LISTEN:
+                        	case STATE_CONNECTING:
+                        		// Situation normal. Start the connected thread.
+                        		connected(socket, socket.getRemoteDevice(), mSocketType);
+                        		break;
+                        	case STATE_NONE:
+                        	case STATE_CONNECTED:
+                        		// Either not ready or already connected. Terminate new socket.
+                        		try {
+                        			socket.close();
+                        		} catch (IOException e) {
+                        			Log.e(TAG, "Could not close unwanted socket", e);
+                        		}
+                        		break;
                         }
                     }
                 }
             }
             if (D) Log.i(TAG, "END mAcceptThread, socket Type: " + mSocketType);
-
         }
 
         public void cancel() {
@@ -431,7 +427,7 @@ public class BluetoothChatService {
 
             // Get the BluetoothSocket input and output streams
             try {
-                tmpIn = socket.getInputStream();
+                tmpIn  = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
             } catch (IOException e) {
                 Log.e(TAG, "temp sockets not created", e);
